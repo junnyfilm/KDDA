@@ -12,7 +12,6 @@ import sys
 import numpy as np
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-
 def student_valid(s_encoder,s_classifier,source_dataloader):
     
 
@@ -35,7 +34,7 @@ def student_valid(s_encoder,s_classifier,source_dataloader):
             y = y.to(device)
             
             raw_f1,fft_f1,s_feature11= s_encoder(X_s,X_s2)
-            s_out1, s_logits21, s_a_feature21= s_classifier(s_feature11)
+            s_out1, s_logits21, s_a_feature21,_= s_classifier(s_feature11)
             
             
             loss = criterion(s_out1, y)

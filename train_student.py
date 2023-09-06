@@ -1,4 +1,3 @@
-
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -14,6 +13,7 @@ from loss import CMD
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.preprocessing import LabelEncoder
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 def student_train(t_encoder,temporal_c,temporal_v,spatial_c,spatial_v,cross_att,t_classifier,s_encoder,s_classifier,discriminator1,discriminator2, optimizer, source_dataloader1,source_dataloader2,target_dataloader,epoch):
     step=0
@@ -43,7 +43,8 @@ def student_train(t_encoder,temporal_c,temporal_v,spatial_c,spatial_v,cross_att,
     best_s_classifier = None
     best_discirminator1=None
     best_discirminator2=None
-    
+    domain_criterion = nn.CrossEntropyLoss().to(device)
+
     criterion = nn.CrossEntropyLoss().to(device)
     kldiv = nn.KLDivLoss().to(device)
     best_score = 0
@@ -66,7 +67,7 @@ def student_train(t_encoder,temporal_c,temporal_v,spatial_c,spatial_v,cross_att,
     for batch_idx, (sdata1, sdata2, tdata) in enumerate(zip(source_dataloader1, source_dataloader2, target_dataloader)):
         v_t1,v_f1,c_t1,c_f1,y1=sdata1
         v_t2,v_f2,c_t2,c_f2,y2=sdata2
-        v_t3,v_f3,c_t3,c_f3,d=tdata
+        v_t3,v_f3,c_t3,c_f3,y3=tdata
         
         
         # setup hyperparameters
@@ -84,7 +85,6 @@ def student_train(t_encoder,temporal_c,temporal_v,spatial_c,spatial_v,cross_att,
         att_c1,att_v1=torch.cat([t_c_r1,t_c_f1], dim=1),torch.cat([t_v_r1,t_v_f1], dim=1)
         att1=cross_att(att_c1,att_v1)
         out1, logits21,feature1= t_classifier(att1)
-        
         #teacher2
         t_v_r2,t_c_r2,t_v_f2,t_c_f2= t_encoder(v_t2,v_f2,c_t2,c_f2)
         t_c_r2=temporal_c(t_c_r2)
@@ -95,21 +95,25 @@ def student_train(t_encoder,temporal_c,temporal_v,spatial_c,spatial_v,cross_att,
         att2=cross_att(att_c2,att_v2)
         out2, logits22,feature2= t_classifier(att2)
         
-        
             
         #student1
+     
         raw_f1,fft_f1,s_feature11= s_encoder(c_t1,c_f1)
+        
         # loss1
         time_distill_loss1 = kldiv(nn.functional.log_softmax(t_c_r1, dim=1),nn.functional.softmax(raw_f1, dim=1))
         spectral_distill_loss1 = kldiv(nn.functional.log_softmax(t_c_f1, dim=1),nn.functional.softmax(fft_f1, dim=1))
         cross_att_distill_loss1 = kldiv(nn.functional.log_softmax(att1, dim=1),nn.functional.softmax(s_feature11, dim=1))
 
-        s_out1, s_logits21, s_a_feature21= s_classifier(s_feature11)
+        s_out1, s_logits21, s_feature21,dfeature1= s_classifier(s_feature11)
+        
         end_feature_distill_loss1 = kldiv(nn.functional.log_softmax(logits21, dim=1),nn.functional.softmax(s_logits21, dim=1))
         
         kd_loss1=time_distill_loss1+spectral_distill_loss1+cross_att_distill_loss1+end_feature_distill_loss1
         class_loss1 = criterion(s_out1, y1)
         
+        # print("y1",y1)
+        # print("s_out1",s_out1)
         #student
         raw_f2,fft_f2,s_feature12= s_encoder(c_t2,c_f2)
         # loss2
@@ -117,31 +121,36 @@ def student_train(t_encoder,temporal_c,temporal_v,spatial_c,spatial_v,cross_att,
         spectral_distill_loss2 = kldiv(nn.functional.log_softmax(t_c_f2, dim=1),nn.functional.softmax(fft_f2, dim=1))
         cross_att_distill_loss2 = kldiv(nn.functional.log_softmax(att2, dim=1),nn.functional.softmax(s_feature12, dim=1))
 
-        s_out2, s_logits22, s_a_feature22= s_classifier(s_feature12)
+        s_out2, s_logits22, s_feature22,dfeature2= s_classifier(s_feature12)
         end_feature_distill_loss2 = kldiv(nn.functional.log_softmax(logits22, dim=1),nn.functional.softmax(s_logits22, dim=1))
         
         kd_loss2=time_distill_loss2+spectral_distill_loss2+cross_att_distill_loss2+end_feature_distill_loss2
         class_loss2 = criterion(s_out2, y2)
         
         
-        source_labels1 = Variable(torch.tensor(label_encoder.transform((np.array(["s1"]*32).reshape(-1,1)))).type(torch.long).cuda())
-        source_labels2 = Variable(torch.tensor(label_encoder.transform((np.array(["s1"]*32).reshape(-1,1)))).type(torch.long).cuda())
-        target_labels = Variable(torch.tensor(label_encoder.transform((np.array(["t"]*32).reshape(-1,1)))).type(torch.long).cuda())            # compute the domain loss of src_feature and target_feature
+        source_labels1 = Variable(torch.tensor(label_encoder.transform((np.array(["s1"]*32).reshape(-1,1)))).type(torch.long).to(device))
+        source_labels2 = Variable(torch.tensor(label_encoder.transform((np.array(["s1"]*32).reshape(-1,1)))).type(torch.long).to(device))
+        target_labels = Variable(torch.tensor(label_encoder.transform((np.array(["s1"]*32).reshape(-1,1)))).type(torch.long).to(device))            # compute the domain loss of src_feature and target_feature
+
+        #target data
+        raw_f3,fft_f3,s_feature13= s_encoder(c_t3,c_f3)
+        s_out3, s_logits23, s_feature23,dfeature3= s_classifier(s_feature13)
 
         #domain discriminator
-        _,d1=discriminator1(s_feature1, constant)
-        _,d2=discriminator2(s_feature2, constant)
-        _,d3=discriminator1(target_feature, constant)
-        _,d4=discriminator2(target_feature, constant)
+        _,d1=discriminator1(dfeature1, constant)
+        _,d2=discriminator2(dfeature2, constant)
+        _,d3=discriminator1(dfeature3, constant)
+        _,d4=discriminator2(dfeature3, constant)
         tgt_loss1 = domain_criterion(d3, target_labels)
         tgt_loss2 = domain_criterion(d4, target_labels)
         src_loss1 = domain_criterion(d1, source_labels1)
         src_loss2 = domain_criterion(d2, source_labels2)
         
         #weight
-        weight_CMD_1 = torch.exp(CMD(tgt_feature, src_feature1))
-        weight_CMD_2 = torch.exp(CMD(tgt_feature, src_feature2))
-
+        weight_CMD_1 = torch.exp(-CMD(s_feature13, s_feature11))
+        weight_CMD_2 = torch.exp(-CMD(s_feature13, s_feature12))
+        print("weight_CMD_1",weight_CMD_1)
+        print("weight_CMD_2",weight_CMD_2)
         w1=weight_CMD_1/(weight_CMD_1+weight_CMD_2)
         w2=weight_CMD_2/(weight_CMD_1+weight_CMD_2)
         
@@ -152,7 +161,10 @@ def student_train(t_encoder,temporal_c,temporal_v,spatial_c,spatial_v,cross_att,
         kd_loss=w1*kd_loss1+w2*kd_loss2
         domain_loss =  w1*src_loss1 + w2*src_loss2
         target_domain_loss=w1*tgt_loss1+w2*tgt_loss2
-        
+        print(w1)
+        print(class_loss1,class_loss2)
+        print(class_loss,kd_loss,domain_loss,target_domain_loss)
+        print("---------------------")
         total_loss=class_loss+kd_loss+domain_loss+target_domain_loss
         total_loss.backward()
         optimizer.step()
@@ -161,5 +173,4 @@ def student_train(t_encoder,temporal_c,temporal_v,spatial_c,spatial_v,cross_att,
 
         
     return s_encoder,s_classifier,discriminator1,discriminator2
-    
     

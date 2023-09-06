@@ -94,6 +94,13 @@ def teacher_train(encoder,temporal_c,temporal_v,spatial_c,spatial_v,cross_att,cl
         print(f'Epoch [{epoch}], Train Loss : [{np.mean(train_loss) :.5f}] Val Loss : [{np.mean(val_loss) :.5f}] Val ACC Score : [{val_score:.5f}]')
         
         print("source 2 train")
+        encoder.train()
+        temporal_c.train()
+        temporal_v.train()
+        spatial_c.train()
+        spatial_v.train()
+        cross_att.train()
+        classifier.train()
         for X_t,X_t2, X_s,X_s2, y in tqdm(train_loader2):
             X_t = X_t.float().to(device)
             X_t2 = X_t2.float().to(device)

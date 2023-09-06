@@ -69,10 +69,17 @@ class student_encoder(nn.Module):
     def forward(self, raw, fft):
         # x=torch.squeeze(x,3)
         fft = self.fft_to_raw(fft)
-        fft=self.encoder_fft(fft)
-        raw=self.encoder_raw(raw)
-
+        # print("After fft_to_raw: ", torch.isnan(fft).any())
+        # print("After fft_to_raw: ", fft)
+    
+        fft = self.encoder_fft(fft)
+        # print("After encoder_fft: ", torch.isnan(fft).any())
+        # print("After fft_to_raw: ", fft)
+        raw = self.encoder_raw(raw)
+        # print("After encoder_raw: ", torch.isnan(raw).any())
+        # print("After fft_to_raw: ", raw)
         feature=torch.cat([raw,fft], dim=1)
+        # print(feature)
        
 
         return raw,fft,feature
@@ -141,13 +148,17 @@ class student_classifier(nn.Module):
         logits2 = self.fc2(logits)
         out = self.fc3(logits2)
 
-        return out, logits2, feature
+        return out, logits2, feature,x
     
     
-class Domain_classifier1(nn.Module):
+class Domain_classifier(nn.Module):
 
     def __init__(self):
-        super(Domain_classifier1, self).__init__()
+        super(Domain_classifier, self).__init__()
+        self.fc0 = nn.Sequential(
+            nn.Linear(512, 128),
+            nn.BatchNorm1d(128),
+            nn.ReLU())
         self.fc1 = nn.Sequential(
             nn.Linear(128, 32),
             nn.BatchNorm1d(32),
@@ -160,28 +171,11 @@ class Domain_classifier1(nn.Module):
 
     def forward(self, input, constant):
         input = GradReverse.grad_reverse(input, constant)
-        logits1 = self.fc1(input)
+        logits0= self.fc0(input)
+        logits1 = self.fc1(logits0)
         logits2 = self.fc2(logits1)
         return logits1, logits2
     
     
-class Domain_classifier2(nn.Module):
 
-    def __init__(self):
-        super(Domain_classifier2, self).__init__()
-        self.fc1 = nn.Sequential(
-            nn.Linear(128, 32),
-            nn.BatchNorm1d(32),
-            nn.ReLU())
-        self.fc2 = nn.Sequential(
-            nn.Linear(32, 2),
-            nn.BatchNorm1d(2),
-            nn.ReLU())
-        
-  
-    def forward(self, input, constant):
-        input = GradReverse.grad_reverse(input, constant)
-        logits1 = self.fc1(input)
-        logits2 = self.fc2(logits1)
-        return logits1, logits2
     

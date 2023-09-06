@@ -7,6 +7,5 @@ from .cnn import GlobalAvgPool1D
 
 from .student_model import student_encoder
 from .student_model import student_classifier
-from .student_model import Domain_classifier1
-from .student_model import Domain_classifier2
+from .student_model import Domain_classifier
 # from .student_model import GradReverse
