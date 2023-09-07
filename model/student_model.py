@@ -5,6 +5,7 @@ import torch.optim as optim
 from torch.utils.data import DataLoader, Dataset
 from torch.autograd import Variable
 from .cnn import BasicBlock,GlobalAvgPool1D, conv3x1,conv1x1
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 class GradReverse(torch.autograd.Function):
     @staticmethod
