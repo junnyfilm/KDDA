@@ -7,10 +7,9 @@ from torch.utils.data import DataLoader, Dataset
 from torch.autograd import Variable
 from tqdm import tqdm 
 import sys
-# from valid_teacher import validation_teacher
-# from valid_student import validation_student
+
 import numpy as np
-from util import multi_acc 
+from utils.util import multi_acc 
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 

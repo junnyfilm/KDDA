@@ -5,7 +5,7 @@ import torch.optim as optim
 from torch.utils.data import DataLoader, Dataset
 from torch.autograd import Variable
 from tqdm import tqdm 
-from util import multi_acc
+from utils.util import multi_acc
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 

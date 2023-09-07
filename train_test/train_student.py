@@ -6,11 +6,8 @@ from torch.utils.data import DataLoader, Dataset
 from torch.autograd import Variable
 from tqdm import tqdm 
 import sys
-# from valid_teacher import validation_teacher
-# from valid_student import validation_student
 import numpy as np
-from loss import CMD
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+from utils.loss import CMD
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.preprocessing import LabelEncoder
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")

@@ -3,87 +3,87 @@ from torch.utils.data import DataLoader
 import pickle
 
 
-with open('../data/ix_tr_s1.pickle', 'rb') as f:
+with open('../../data/ix_tr_s1.pickle', 'rb') as f:
     ix_tr_s1 = pickle.load(f)
-with open('../data/ix_vl_s1.pickle', 'rb') as f:
+with open('../../data/ix_vl_s1.pickle', 'rb') as f:
     ix_vl_s1 = pickle.load(f)
-with open('../data/ix_ts_s1.pickle', 'rb') as f:
+with open('../../data/ix_ts_s1.pickle', 'rb') as f:
     ix_ts_s1 = pickle.load(f)
-with open('../data/iy_tr_s1.pickle', 'rb') as f:
+with open('../../data/iy_tr_s1.pickle', 'rb') as f:
     iy_tr_s1 = pickle.load(f)
-with open('../data/iy_vl_s1.pickle', 'rb') as f:
+with open('../../data/iy_vl_s1.pickle', 'rb') as f:
     iy_vl_s1 = pickle.load(f)
-with open('../data/iy_ts_s1.pickle', 'rb') as f:
+with open('../../data/iy_ts_s1.pickle', 'rb') as f:
     iy_ts_s1 = pickle.load(f)
 
     
-with open('../data/vx_tr_s1.pickle', 'rb') as f:
+with open('../../data/vx_tr_s1.pickle', 'rb') as f:
     vx_tr_s1 = pickle.load(f)
-with open('../data/vx_vl_s1.pickle', 'rb') as f:
+with open('../../data/vx_vl_s1.pickle', 'rb') as f:
     vx_vl_s1 = pickle.load(f)
-with open('../data/vx_ts_s1.pickle', 'rb') as f:
+with open('../../data/vx_ts_s1.pickle', 'rb') as f:
     vx_ts_s1 = pickle.load(f)
-with open('../data/vy_tr_s1.pickle', 'rb') as f:
+with open('../../data/vy_tr_s1.pickle', 'rb') as f:
     vy_tr_s1 = pickle.load(f)
-with open('../data/vy_vl_s1.pickle', 'rb') as f:
+with open('../../data/vy_vl_s1.pickle', 'rb') as f:
     vy_vl_s1 = pickle.load(f)
-with open('../data/vy_ts_s1.pickle', 'rb') as f:
+with open('../../data/vy_ts_s1.pickle', 'rb') as f:
     vy_ts_s1 = pickle.load(f)
 
 
-with open('../data/ix_tr_s2.pickle', 'rb') as f:
+with open('../../data/ix_tr_s2.pickle', 'rb') as f:
     ix_tr_s2 = pickle.load(f)
-with open('../data/ix_vl_s2.pickle', 'rb') as f:
+with open('../../data/ix_vl_s2.pickle', 'rb') as f:
     ix_vl_s2 = pickle.load(f)
-with open('../data/ix_ts_s2.pickle', 'rb') as f:
+with open('../../data/ix_ts_s2.pickle', 'rb') as f:
     ix_ts_s2 = pickle.load(f)
-with open('../data/iy_tr_s2.pickle', 'rb') as f:
+with open('../../data/iy_tr_s2.pickle', 'rb') as f:
     iy_tr_s2 = pickle.load(f)
-with open('../data/iy_vl_s2.pickle', 'rb') as f:
+with open('../../data/iy_vl_s2.pickle', 'rb') as f:
     iy_vl_s2 = pickle.load(f)
-with open('../data/iy_ts_s2.pickle', 'rb') as f:
+with open('../../data/iy_ts_s2.pickle', 'rb') as f:
     iy_ts_s2 = pickle.load(f)
 
     
-with open('../data/vx_tr_s2.pickle', 'rb') as f:
+with open('../../data/vx_tr_s2.pickle', 'rb') as f:
     vx_tr_s2 = pickle.load(f)
-with open('../data/vx_vl_s2.pickle', 'rb') as f:
+with open('../../data/vx_vl_s2.pickle', 'rb') as f:
     vx_vl_s2 = pickle.load(f)
-with open('../data/vx_ts_s2.pickle', 'rb') as f:
+with open('../../data/vx_ts_s2.pickle', 'rb') as f:
     vx_ts_s2 = pickle.load(f)
-with open('../data/vy_tr_s2.pickle', 'rb') as f:
+with open('../../data/vy_tr_s2.pickle', 'rb') as f:
     vy_tr_s2 = pickle.load(f)
-with open('../data/vy_vl_s2.pickle', 'rb') as f:
+with open('../../data/vy_vl_s2.pickle', 'rb') as f:
     vy_vl_s2 = pickle.load(f)
-with open('../data/vy_ts_s2.pickle', 'rb') as f:
+with open('../../data/vy_ts_s2.pickle', 'rb') as f:
     vy_ts_s2 = pickle.load(f)
 
 
-with open('../data/ix_tr_t.pickle', 'rb') as f:
+with open('../../data/ix_tr_t.pickle', 'rb') as f:
     ix_tr_t = pickle.load(f)
-with open('../data/ix_vl_t.pickle', 'rb') as f:
+with open('../../data/ix_vl_t.pickle', 'rb') as f:
     ix_vl_t = pickle.load(f)
-with open('../data/ix_ts_t.pickle', 'rb') as f:
+with open('../../data/ix_ts_t.pickle', 'rb') as f:
     ix_ts_t = pickle.load(f)
-with open('../data/iy_tr_t.pickle', 'rb') as f:
+with open('../../data/iy_tr_t.pickle', 'rb') as f:
     iy_tr_t = pickle.load(f)
-with open('../data/iy_vl_t.pickle', 'rb') as f:
+with open('../../data/iy_vl_t.pickle', 'rb') as f:
     iy_vl_t = pickle.load(f)
-with open('../data/iy_ts_t.pickle', 'rb') as f:
+with open('../../data/iy_ts_t.pickle', 'rb') as f:
     iy_ts_t = pickle.load(f)
 
     
-with open('../data/vx_tr_t.pickle', 'rb') as f:
+with open('../../data/vx_tr_t.pickle', 'rb') as f:
     vx_tr_t = pickle.load(f)
-with open('../data/vx_vl_t.pickle', 'rb') as f:
+with open('../../data/vx_vl_t.pickle', 'rb') as f:
     vx_vl_t = pickle.load(f)
-with open('../data/vx_ts_t.pickle', 'rb') as f:
+with open('../../data/vx_ts_t.pickle', 'rb') as f:
     vx_ts_t = pickle.load(f)
-with open('../data/vy_tr_t.pickle', 'rb') as f:
+with open('../../data/vy_tr_t.pickle', 'rb') as f:
     vy_tr_t = pickle.load(f)
-with open('../data/vy_vl_t.pickle', 'rb') as f:
+with open('../../data/vy_vl_t.pickle', 'rb') as f:
     vy_vl_t = pickle.load(f)
-with open('../data/vy_ts_t.pickle', 'rb') as f:
+with open('../../data/vy_ts_t.pickle', 'rb') as f:
     vy_ts_t = pickle.load(f)
 
 def dataloader():

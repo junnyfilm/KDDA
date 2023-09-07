@@ -6,8 +6,7 @@ from torch.utils.data import DataLoader, Dataset
 from torch.autograd import Variable
 from tqdm import tqdm 
 import sys
-# from model.teacher_model import teacher_encoder, SpatialAttention, MultiviewCrossAttention, teacher_classifier
-from valid_teacher import validation_teacher
+from train_test.valid_teacher import validation_teacher
 import numpy as np
 
 
