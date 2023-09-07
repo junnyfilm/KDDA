@@ -42,7 +42,6 @@ def student_valid(s_encoder,s_classifier,source_dataloader):
             val_acc=multi_acc(s_out1,y)
             val_acc_num += val_acc.item()
 
-    print("loss:",round(sum(val_loss)/len(val_loss),3),"Acc:", val_acc_num/len(source_dataloader)   )       
     return round(sum(val_loss)/len(val_loss),3), val_acc_num/len(source_dataloader)   
         
         

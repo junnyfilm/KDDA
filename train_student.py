@@ -63,7 +63,7 @@ def student_train(t_encoder,temporal_c,temporal_v,spatial_c,spatial_v,cross_att,
     # steps
     start_steps = epoch * len(source_dataloader1)
     total_steps = 10 * len(source_dataloader1)
-
+    mincmd=999999999999
     for batch_idx, (sdata1, sdata2, tdata) in enumerate(zip(source_dataloader1, source_dataloader2, target_dataloader)):
         v_t1,v_f1,c_t1,c_f1,y1=sdata1
         v_t2,v_f2,c_t2,c_f2,y2=sdata2
@@ -147,12 +147,23 @@ def student_train(t_encoder,temporal_c,temporal_v,spatial_c,spatial_v,cross_att,
         src_loss2 = domain_criterion(d2, source_labels2)
         
         #weight
-        weight_CMD_1 = torch.exp(-CMD(s_feature13, s_feature11))
-        weight_CMD_2 = torch.exp(-CMD(s_feature13, s_feature12))
-        print("weight_CMD_1",weight_CMD_1)
-        print("weight_CMD_2",weight_CMD_2)
-        w1=weight_CMD_1/(weight_CMD_1+weight_CMD_2)
-        w2=weight_CMD_2/(weight_CMD_1+weight_CMD_2)
+        if epoch<10:
+            w1,w2=0.5,0.5
+            cmd_val=999999999999
+        else:
+            cmd1=CMD(s_feature13, s_feature11)
+            cmd2=CMD(s_feature13, s_feature12)
+
+            
+            cmd_val=cmd1+cmd2
+            if cmd_val<mincmd:
+                mincmd=cmd_val
+            w1=cmd2/(cmd1+cmd2)
+            w2=cmd1/(cmd1+cmd2)
+            # print("cmd1: ",cmd1)
+            # print("cmd2: ",cmd2)
+            # print("weight1 and 2: ",w1,w2)
+        
         
         
         
@@ -161,16 +172,16 @@ def student_train(t_encoder,temporal_c,temporal_v,spatial_c,spatial_v,cross_att,
         kd_loss=w1*kd_loss1+w2*kd_loss2
         domain_loss =  w1*src_loss1 + w2*src_loss2
         target_domain_loss=w1*tgt_loss1+w2*tgt_loss2
-        print(w1)
-        print(class_loss1,class_loss2)
-        print(class_loss,kd_loss,domain_loss,target_domain_loss)
-        print("---------------------")
+        # print("class, kd, domain,target: ",class_loss,kd_loss,domain_loss,target_domain_loss)
         total_loss=class_loss+kd_loss+domain_loss+target_domain_loss
         total_loss.backward()
         optimizer.step()
-        print("total_loss: ",total_loss)
- 
+    if epoch>10:
+        print("cmd1: ",cmd1)
+        print("cmd2: ",cmd2)
+        print("weight1 and 2: ",w1,w2)
+    print("class loss: ",class_loss, "kd loss: ",kd_loss, "domain loss: ",domain_loss,"target loss: ",target_domain_loss)
+    print("total_loss: ",total_loss)
 
-        
-    return s_encoder,s_classifier,discriminator1,discriminator2
+    return s_encoder,s_classifier,discriminator1,discriminator2, mincmd, w1,w2
     
